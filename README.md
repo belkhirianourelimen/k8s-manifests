@@ -11,22 +11,6 @@
 
 ---
 
-## Contexte du projet
-
-**Projet de Fin d'Études (PFE) — ESPRIT 2024/2025**
-
-Dans le cadre d'un stage chez **AuroraIQ** pour le compte de **WellnessHub**, ce dépôt contient l'ensemble des manifests Kubernetes permettant de déployer l'application WellnessHub sur un cluster local (Minikube) dans le cadre d'une architecture **DevOps hybride** — avant migration vers AWS.
-
-| Champ | Valeur |
-|-------|--------|
-| Projet | Mise en place d'une Infrastructure Cloud AWS et DevOps Hybride |
-| Etudiante | Nour El Imen Belkhiria — ESPRIT, 5ème année Cloud & DevOps |
-| Entreprise | WellnessHub × AuroraIQ |
-| Stack applicative | Spring Boot (microservices) + React/Next.js (frontend) |
-| Cluster cible | Minikube v1.38.1 (local) / AuroraIQ Kubernetes (production) |
-
----
-
 ## Architecture
 
 ```
@@ -284,10 +268,4 @@ k8s-manifests/
 
 ---
 
-## Licence
-
-Projet académique — PFE ESPRIT 2024/2025. Non destiné à un usage en production tel quel.
-
----
-
-*Nour El Imen Belkhiria — ESPRIT × AuroraIQ × WellnessHub — 2025*
+*Nour El Imen Belkhiria — 2026*
