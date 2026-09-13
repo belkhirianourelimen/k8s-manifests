@@ -131,7 +131,6 @@ minikube addons enable ingress
 ### 2. Configurer les secrets
 
 ```bash
-# Copier le template et remplir avec vos valeurs
 cp secret.yaml.example secret.yaml
 nano secret.yaml
 ```
@@ -152,7 +151,6 @@ kubectl create secret docker-registry dockerhub-secret \
 ### 4. Charger les images backend dans Minikube
 
 ```bash
-# Les images doivent être présentes dans la registry locale
 minikube image load 192.168.49.1:5000/wellness-eureka:latest
 minikube image load 192.168.49.1:5000/wellness-adminms:latest
 minikube image load 192.168.49.1:5000/wellness-expertms:latest
@@ -175,15 +173,11 @@ VITE_API_URL: "http://YOUR_VM_IP:8762/api"
 
 ### Set minimal — 5 services (3GB RAM)
 
-Déploie : PostgreSQL + Eureka + ExpertMS + Gateway + Frontend
-
 ```bash
 bash deploy-minimal.sh
 ```
 
 ### Set complet — 7 services (6GB RAM minimum)
-
-Déploie tous les microservices :
 
 ```bash
 bash deploy-all.sh
@@ -192,16 +186,9 @@ bash deploy-all.sh
 ### Vérifier le déploiement
 
 ```bash
-# Etat des pods
 kubectl get pods -n wellnesshub
-
-# Etat des services
 kubectl get svc -n wellnesshub
-
-# Logs d'un pod
 kubectl logs -l app=expertms -n wellnesshub --tail 50
-
-# Etat de l'ingress
 kubectl get ingress -n wellnesshub
 ```
 
@@ -221,12 +208,12 @@ Ajouter dans `/etc/hosts` de votre machine :
 | API Gateway | `http://VM_IP:30762` | `http://wellnesshub.local/api` |
 | Eureka | `http://VM_IP:9761` (port-forward) | `http://wellnesshub.local/eureka` |
 
-> Port-forward pour accès externe :
-> ```bash
-> kubectl port-forward svc/frontend-service 30080:80 -n wellnesshub --address 0.0.0.0 &
-> kubectl port-forward svc/gateway-service 30762:8762 -n wellnesshub --address 0.0.0.0 &
-> kubectl port-forward svc/eureka-service 9761:8761 -n wellnesshub --address 0.0.0.0 &
-> ```
+```bash
+# Port-forward pour accès externe
+kubectl port-forward svc/frontend-service 30080:80 -n wellnesshub --address 0.0.0.0 &
+kubectl port-forward svc/gateway-service 30762:8762 -n wellnesshub --address 0.0.0.0 &
+kubectl port-forward svc/eureka-service 9761:8761 -n wellnesshub --address 0.0.0.0 &
+```
 
 ---
 
@@ -237,38 +224,27 @@ k8s-manifests/
 ├── .gitignore
 ├── README.md
 ├── secret.yaml.example          ← template (à commiter)
-│
 ├── namespace.yaml               ← Namespace : wellnesshub
 ├── configmap.yaml               ← Variables de configuration
-│
 ├── postgres-pvc.yaml            ← PersistentVolumeClaim 5GB
 ├── postgres-deployment.yaml     ← PostgreSQL 15-alpine
 ├── postgres-service.yaml        ← ClusterIP :5432
 ├── postgres-init-job.yaml       ← Job : création des 4 databases
-│
-├── eureka-deployment.yaml       ← Service Discovery
-├── eureka-service.yaml          ← ClusterIP :8761
-│
-├── adminms-deployment.yaml      ← Microservice Admin
-├── adminms-service.yaml         ← ClusterIP :8763
-│
-├── expertms-deployment.yaml     ← Microservice Expert
-├── expertms-service.yaml        ← ClusterIP :8764
-│
-├── entreprisex-deployment.yaml  ← Microservice EntrepriseX
-├── entreprisex-service.yaml     ← ClusterIP :8765
-│
-├── entreprisey-deployment.yaml  ← Microservice EntrepriseY
-├── entreprisey-service.yaml     ← ClusterIP :8766
-│
-├── gateway-deployment.yaml      ← API Gateway (NodePort :30762)
+├── eureka-deployment.yaml       ← Service Discovery :8761
+├── eureka-service.yaml
+├── adminms-deployment.yaml      ← Microservice Admin :8763
+├── adminms-service.yaml
+├── expertms-deployment.yaml     ← Microservice Expert :8764
+├── expertms-service.yaml
+├── entreprisex-deployment.yaml  ← Microservice EntrepriseX :8765
+├── entreprisex-service.yaml
+├── entreprisey-deployment.yaml  ← Microservice EntrepriseY :8766
+├── entreprisey-service.yaml
+├── gateway-deployment.yaml      ← API Gateway NodePort :30762
 ├── gateway-service.yaml
-│
-├── frontend-deployment.yaml     ← Frontend React/Next.js prod
-├── frontend-service.yaml        ← NodePort :30080
-│
+├── frontend-deployment.yaml     ← Frontend React/Next.js prod :30080
+├── frontend-service.yaml
 ├── ingress.yaml                 ← Nginx Ingress → wellnesshub.local
-│
 ├── deploy-minimal.sh            ← Déploiement 5 services (3GB RAM)
 └── deploy-all.sh                ← Déploiement complet (6GB RAM)
 ```
@@ -298,6 +274,13 @@ k8s-manifests/
 | `ReadinessProbe 403` | Spring Security bloque `/actuator/health` | `httpGet` → `tcpSocket` |
 | Cluster saturé (timeout TLS) | 9 services Spring Boot = ~4GB RAM > 3GB alloués | Set minimal 5 services |
 | Gateway bloqué en `Init:1/2` | `wait-for-adminms` (service non déployé dans le set minimal) | `wait-for-expertms` |
+
+---
+
+## 🔗 Liens utiles
+
+- 🏗️ [aws-infra-terraform](https://github.com/belkhirianourelimen/aws-infra-terraform.git) — Infrastructure AWS avec Terraform
+- 🔄 [wellnesshub-cicd](https://github.com/belkhirianourelimen/ci-cd.git) — Pipelines Jenkins CI/CD
 
 ---
 
