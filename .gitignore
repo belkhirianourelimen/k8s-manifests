@@ -1,0 +1,19 @@
+# Secrets — ne jamais pousser sur GitHub
+secret.yaml
+*.secret.yaml
+*-secret.yaml
+
+# Fichiers locaux
+*.local
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp

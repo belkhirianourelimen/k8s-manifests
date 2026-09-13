@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wellnesshub-config
+  namespace: wellnesshub
+data:
+  POSTGRES_PORT: "5432"
+  ADMIN_DB: WellnessHubAdmin
+  EXPERT_DB: WellnessHubbase
+  ENTREPRISE_X_DB: EntrepriseXdb
+  ENTREPRISE_Y_DB: EntrepriseYdb
+  EUREKA_PORT: "8761"
+  EUREKA_URL: "http://eureka-service:8761/eureka/"
+  VITE_API_URL: "http://100.122.204.32:8762/api"

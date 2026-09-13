@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  namespace: wellnesshub
+  labels:
+    app: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      initContainers:
+        - name: wait-for-eureka
+          image: busybox:1.35
+          command: ['sh', '-c', 'until nc -z eureka-service 8761; do echo waiting for eureka; sleep 5; done']
+        - name: wait-for-expertms
+          image: busybox:1.35
+          command: ['sh', '-c', 'until nc -z expertms-service 8764; do echo waiting for expertms; sleep 5; done']
+      containers:
+        - name: gateway
+          image: 192.168.49.1:5000/wellness-gateway:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8762
+          env:
+            - name: API_GATEWAY_PORT
+              value: "8762"
+            - name: FRONTEND_URL
+              value: "http://wellnesshub.local"
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              valueFrom:
+                configMapKeyRef:
+                  name: wellnesshub-config
+                  key: EUREKA_URL
+          readinessProbe:
+            tcpSocket:
+              port: 8762
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            failureThreshold: 10

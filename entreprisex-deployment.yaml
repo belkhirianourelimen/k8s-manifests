@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: entreprisex
+  namespace: wellnesshub
+  labels:
+    app: entreprisex
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: entreprisex
+  template:
+    metadata:
+      labels:
+        app: entreprisex
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox:1.35
+          command: ['sh', '-c', 'until nc -z postgres-service 5432; do echo waiting for postgres; sleep 5; done']
+        - name: wait-for-eureka
+          image: busybox:1.35
+          command: ['sh', '-c', 'until nc -z eureka-service 8761; do echo waiting for eureka; sleep 5; done']
+      containers:
+        - name: entreprisex
+          image: 192.168.49.1:5000/wellness-entreprisex:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8765
+          env:
+            - name: ENTREPRISE_X_PORT
+              value: "8765"
+            - name: FRONTEND_URL
+              value: "http://wellnesshub.local"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres-service:5432/EntrepriseXdb"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: wellnesshub-secret
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wellnesshub-secret
+                  key: POSTGRES_PASSWORD
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              valueFrom:
+                configMapKeyRef:
+                  name: wellnesshub-config
+                  key: EUREKA_URL
+            - name: SPRING_MAIL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: wellnesshub-secret
+                  key: MAIL_HOST
+            - name: SPRING_MAIL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: wellnesshub-secret
+                  key: MAIL_PORT
+            - name: SPRING_MAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: wellnesshub-secret
+                  key: MAIL_USERNAME
+            - name: SPRING_MAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wellnesshub-secret
+                  key: MAIL_PASSWORD
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: wellnesshub-secret
+                  key: JWT_SECRET
+            - name: JWT_EXPIRATION
+              valueFrom:
+                secretKeyRef:
+                  name: wellnesshub-secret
+                  key: JWT_EXPIRATION
+            - name: JWT_REFRESH_EXPIRATION
+              valueFrom:
+                secretKeyRef:
+                  name: wellnesshub-secret
+                  key: JWT_REFRESH_EXPIRATION
+            - name: SERVICE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: wellnesshub-secret
+                  key: SERVICE_API_KEY
+          readinessProbe:
+            tcpSocket:
+              port: 8765
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            failureThreshold: 10
