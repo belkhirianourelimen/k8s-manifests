@@ -11,4 +11,5 @@ data:
   ENTREPRISE_Y_DB: EntrepriseYdb
   EUREKA_PORT: "8761"
   EUREKA_URL: "http://eureka-service:8761/eureka/"
-  VITE_API_URL: "http://100.122.204.32:8762/api"
+  # Remplacer par l'IP ou le domaine de votre VM / cluster
+  VITE_API_URL: "http://YOUR_VM_IP:8762/api"
