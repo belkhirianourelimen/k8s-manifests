@@ -264,7 +264,7 @@ k8s-manifests/
 ## 🔗 Liens utiles
 
 - 🏗️ [aws-infra-terraform](https://github.com/belkhirianourelimen/aws-infra-terraform.git) — Infrastructure AWS avec Terraform
-- 🔄 [wellnesshub-cicd](https://github.com/belkhirianourelimen/ci-cd.git) — Pipelines Jenkins CI/CD
+- 🔄 [ci-cd](https://github.com/belkhirianourelimen/ci-cd.git) — Pipelines Jenkins CI/CD
 
 ---
 
